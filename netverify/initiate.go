@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 type preset struct {
-	Index 		int    		`json:"index"`
+	Index 		int    		`json:"index,omitempty"`
 	Country		string 		`json:"country,omitempty"`
 	Type        string		`json:"type,omitempty"`
 	Phrase      string		`json:"phrase,omitempty"`
@@ -113,13 +113,24 @@ func post2jumio(url, country, locale, IDtype, presetNote string, workflowId int)
 func Initiate() {
 	r := gin.Default()
 	r.POST("/initiate", func(c *gin.Context) {
-		//fetch info from request via html, e.g. locale, presets:country,type, workflowId designed
-
-
+		//fetch info from request via html, e.g. country, locale, IDtype, presetNote if any, workflowId
+		type Formdata struct {
+			WorkflowId		int			`json:"workflowId"`
+			Country			string		`json:"country"`
+			IDType			string		`json:"type"`
+			Locale			string		`json:"locale"`
+			PresetNote		string      `json:"presetNote,omitempty"`
+		}
+		var data Formdata
+		if c.ShouldBind(&data) == nil {
+			resp := post2jumio("https://netverify.com/api/v4/initiate", data.Country, data.Locale, data.IDType, data.PresetNote, data.WorkflowId)
+			c.JSON(200, resp)
+		}
+		c.JSON(404,"no such result")
 
 		//post http request to jumio api: https://netverify.com/api/v4/initiate
-		resp := post2jumio("https://netverify.com/api/v4/initiate")
-		c.JSON(200, resp)
+		//resp := post2jumio("https://netverify.com/api/v4/initiate")
+		//c.JSON(200, resp)
 	})
-	r.Run("localhost:8081")
+	r.Run("localhost:8848")
 }
