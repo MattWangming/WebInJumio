@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
+	"log"
 	"net/http"
+	"time"
 )
 type preset struct {
 	Index 		int    		`json:"index,omitempty"`
@@ -55,16 +57,15 @@ type sendbody2Jumio struct {
 	Locale			string		`json:"locale"`
 }
 
-var sb sendbody2Jumio
+var (
+	sb sendbody2Jumio
+	)
 
 func post2jumio(url, country, locale, IDtype, presetNote string, workflowId int) []byte {
 	//initiate the body with customized part
-	var nonce int64
-	nonce = int64(0)
-	nonce++
-
+	timestamp := time.Now().Format("20060102150405")
 	sb.CIR = "qsto"
-	sb.UserRef = "user" + string(nonce)
+	sb.UserRef = "user" + timestamp
 	sb.SucURL = "https://www.qsto.network/api/jumio/success"
 	sb.CabURL = "https://www.qsto.network/api/jumio/callback"
 	sb.ErrURL = "https://www.qsto.network/api/jumio/error"
@@ -75,24 +76,33 @@ func post2jumio(url, country, locale, IDtype, presetNote string, workflowId int)
 	//change the preset accordingly
 	var preset2Index int
 	if presetNote == "" {
-		preset2Index = int(nil)
-	} else {
+		preset2Index = 0
+		sb.Presets = presets{
+			preset{
+				1,
+				country,
+				IDtype,
+				"",
+			},
+		}
+		}else {
 		preset2Index = 2
+		sb.Presets = presets{
+			preset{
+				1,
+				country,
+				IDtype,
+				"",
+			},
+			preset{
+				preset2Index,
+				"",
+				"",
+				presetNote,
+			},
+		}
 	}
-	sb.Presets = presets{
-		preset{
-			1,
-			country,
-			IDtype,
-			nil,
-		},
-		preset{
-			preset2Index,
-			nil,
-			nil,
-			presetNote,
-		},
-	}
+
 	//other parts fetch from the request of html
 	payload, _ := json.Marshal(sb)
 	body := bytes.NewBuffer(payload)
@@ -103,11 +113,20 @@ func post2jumio(url, country, locale, IDtype, presetNote string, workflowId int)
 	req.Header.Add("User-Agent", "Digital Wallet QSTOApp/v1.0")
 	//Note the specific Authorization code with jumio API credential, updated accordingly!
 	req.Header.Add("Authorization","Basic OWJjZmFhM2QtNThkMy00MjhlLWE5ZTUtYzM3YTc4NDZjMjUwOkFLVXppVjFlNGo2WndYQ2d2SDR4d0o2dGlnUVFxc2Fi")
-	clt := http.Client{}
-	resp, _ := clt.Do(req)
+	//get the origin codes from the standard net/http package
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		log.Fatal(err)
+	}
 	defer resp.Body.Close()
-	rep, _ := ioutil.ReadAll(resp.Body)
-	return rep
+
+	respBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return respBody
+
 }
 
 func Initiate() {
@@ -122,15 +141,15 @@ func Initiate() {
 			PresetNote		string      `json:"presetNote,omitempty"`
 		}
 		var data Formdata
-		if c.ShouldBind(&data) == nil {
-			resp := post2jumio("https://netverify.com/api/v4/initiate", data.Country, data.Locale, data.IDType, data.PresetNote, data.WorkflowId)
-			c.JSON(200, resp)
-		}
-		c.JSON(404,"no such result")
 
-		//post http request to jumio api: https://netverify.com/api/v4/initiate
-		//resp := post2jumio("https://netverify.com/api/v4/initiate")
-		//c.JSON(200, resp)
+		if c.BindJSON(&data) == nil {
+			resp := post2jumio("https://netverify.com/api/v4/initiate", data.Country, data.Locale, data.IDType, data.PresetNote, data.WorkflowId)
+			c.JSON(200, string(resp))
+
+		} else {
+			c.JSON(404,"no such result")
+		}
+
 	})
 	r.Run("localhost:8848")
 }
