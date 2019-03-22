@@ -3,6 +3,7 @@ package netverify
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"log"
@@ -131,6 +132,18 @@ func post2jumio(url, country, locale, IDtype, presetNote string, workflowId int)
 
 func Initiate() {
 	r := gin.Default()
+	//set the CORS policy
+	r.Use(func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, HEAD, OPTIONS, PUT, PATCH, DELETE")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type") //有使用自定义头 需要这个,Action, Module是例子
+
+		if c.Request.Method != "OPTIONS" {
+			c.Next()
+		} else {
+			c.AbortWithStatus(http.StatusOK)
+		}
+	})
 	r.POST("/initiate", func(c *gin.Context) {
 		//fetch info from request via html, e.g. country, locale, IDtype, presetNote if any, workflowId
 		type Formdata struct {
@@ -144,7 +157,9 @@ func Initiate() {
 
 		if c.BindJSON(&data) == nil {
 			resp := post2jumio("https://netverify.com/api/v4/initiate", data.Country, data.Locale, data.IDType, data.PresetNote, data.WorkflowId)
+			fmt.Print(string(resp))
 			c.JSON(200, string(resp))
+
 
 		} else {
 			c.JSON(404,"no such result")
