@@ -62,16 +62,18 @@ var (
 	sb sendbody2Jumio
 	)
 
-func post2jumio(url, country, locale, IDtype, presetNote string, workflowId int) []byte {
+func post2jumio(url, country, locale, IDtype, presetNote string) []byte {
 	//initiate the body with customized part
 	timestamp := time.Now().Format("20060102150405")
 	sb.CIR = "qsto"
 	sb.UserRef = "user" + timestamp
-	sb.SucURL = "https://www.qsto.network/api/jumio/success"
+	sb.SucURL = "https://www.qsto.network/marketplace"
 	sb.CabURL = "https://www.qsto.network/api/jumio/callback"
-	sb.ErrURL = "https://www.qsto.network/api/jumio/error"
+	sb.ErrURL = "https://www.qsto.network/marketplace"
+	//"https://www.qsto.network/marketplace"
 	sb.RepCri = "userReport"
-	sb.WorkfId = workflowId
+	//per discussion, with 200 default
+	sb.WorkfId = 200
 	sb.Locale = locale
 
 	//change the preset accordingly
@@ -107,7 +109,7 @@ func post2jumio(url, country, locale, IDtype, presetNote string, workflowId int)
 	//other parts fetch from the request of html
 	payload, _ := json.Marshal(sb)
 	body := bytes.NewBuffer(payload)
-
+	fmt.Println(string(payload))
 	req, _ := http.NewRequest("POST", url, body)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Add("Accept", "application/json")
@@ -156,7 +158,8 @@ func Initiate() {
 		var data Formdata
 
 		if c.BindJSON(&data) == nil {
-			resp := post2jumio("https://netverify.com/api/v4/initiate", data.Country, data.Locale, data.IDType, data.PresetNote, data.WorkflowId)
+		// url = https://netverify.com/api/v4/initiate
+			resp := post2jumio("https://netverify.com/api/v4/initiate", data.Country, data.Locale, data.IDType, data.PresetNote)
 			fmt.Print(string(resp))
 			c.JSON(200, string(resp))
 
