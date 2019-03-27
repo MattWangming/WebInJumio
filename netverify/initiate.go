@@ -62,7 +62,7 @@ var (
 	sb sendbody2Jumio
 	)
 
-func post2jumio(url, country, locale, IDtype, presetNote string) []byte {
+func Post2jumio(url, country, locale, IDtype, presetNote string) []byte {
 	//initiate the body with customized part
 	timestamp := time.Now().Format("20060102150405")
 	sb.CIR = "qsto"
@@ -159,15 +159,14 @@ func Initiate() {
 
 		if c.BindJSON(&data) == nil {
 		// url = https://netverify.com/api/v4/initiate
-			resp := post2jumio("https://netverify.com/api/v4/initiate", data.Country, data.Locale, data.IDType, data.PresetNote)
+			resp := Post2jumio("https://netverify.com/api/v4/initiate", data.Country, data.Locale, data.IDType, data.PresetNote)
 			fmt.Print(string(resp))
 			c.JSON(200, string(resp))
-
 
 		} else {
 			c.JSON(404,"no such result")
 		}
 
 	})
-	r.Run("localhost:8848")
+	r.Run("192.168.1.23:8848")
 }

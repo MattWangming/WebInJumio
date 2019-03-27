@@ -86,7 +86,7 @@
                     //请求类型，这里为POST
                     type: 'POST',
                     //你要请求的api的URL
-                    url: 'http://localhost:8848/initiate',
+                    url: 'http://192.168.1.23:8848/initiate',
                     // data: data,
                     // //数据类型，这里我用的是json
                     dataType: "json",
@@ -107,9 +107,9 @@
                     success: function (data) {
                         //函数参数 "data" 为请求成功服务端返回的数据, ajax根据response的解析结果进行跳转
                         var dataobj = JSON.parse(data);
-                        //console.log(dataobj.callbackUrl);
+                        // console.log(dataobj.redirectUrl);
                         window.location.href = dataobj.redirectUrl;
-                        // $("#form1").attr("action",dataobj.callbackUrl);
+                      
                     },
                 });
                 // $.post('https://netverify.com/api/v4/initiate', data, function (data, textStatus, jqXHR) {
