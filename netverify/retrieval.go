@@ -33,6 +33,19 @@ func Retrievaldata(scanReference, flag string) string {
 	case flag == "verification":
 		url = BaseURL + scanReference + "/" + "data" + "/" + flag
 
+	//only the front images
+	case flag == "front":
+		url = BaseURL + scanReference + "/" + "images" + "/" + flag
+
+	//only the back images, when ID_CARD is selected as ID type
+	case flag == "back":
+		url = BaseURL + scanReference + "/" + "images" + "/" + flag
+
+	//only the face images
+	case flag == "face":
+		url = BaseURL + scanReference + "/" + "images" + "/" + flag
+
+
 	default:
 		return fmt.Sprintf("No such corresponding fields, please input the correct flag!")
 	}
@@ -44,7 +57,8 @@ func Retrievaldata(scanReference, flag string) string {
 	}
 	//application/json or image/jpeg, image/png for "Retrieving specific image"
 	req.Header.Set("Accept", "application/json")
-
+	req.Header.Add("Accept", "image/png")
+	req.Header.Add("Accept", "image/jpeg")
 	//add the user agent for trouble shooting
 	req.Header.Add("User-Agent", "Digital Wallet QSTOApp/v1.0")
 

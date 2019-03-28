@@ -9,8 +9,8 @@ func TestInitiate(t *testing.T) {
 }
 
 func TestRetrievaldata(t *testing.T) {
-	scanref := "5a3fdc60-a6a3-4a04-aef3-428b7c7d38f0"
-	flag := "data"
+	scanref := "948cc1c2-200e-42be-89c1-bf4113a083d1"
+	flag := "face"
 	result := Retrievaldata(scanref,flag)
 	t.Log(result)
 }
