@@ -2,6 +2,7 @@ package netverify
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -81,4 +82,24 @@ func Retrievaldata(scanReference, flag string) string {
 	return string(respBody)
 }
 
+func RetrievalServer()  {
+	r := gin.Default()
+	//set the CORS policy
+	r.Use(func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, HEAD, OPTIONS, PUT, PATCH, DELETE")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type") //有使用自定义头 需要这个,Action, Module是例子
 
+		if c.Request.Method != "OPTIONS" {
+			c.Next()
+		} else {
+			c.AbortWithStatus(http.StatusOK)
+		}
+	})
+	r.GET("/retrieval", func(c *gin.Context) {
+			resp := Retrievaldata("948cc1c2-200e-42be-89c1-bf4113a083d1", "data")
+			fmt.Print(string(resp))
+			c.JSON(200, string(resp))
+	})
+	r.Run("192.168.1.23:8849")
+}
