@@ -1,14 +1,16 @@
 package netverify
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/mergemap"
 	"io/ioutil"
 	"log"
 	"net/http"
 )
 
-func Retrievaldata(scanReference, flag string) string {
+func RetrievalfromJumio(scanReference, flag string) string {
 	BaseURL := "https://netverify.com/api/netverify/v2/scans/"
 	//assemble the url with different router via different demands, e.g. data, transaction only, .etc
 	var url string
@@ -34,7 +36,10 @@ func Retrievaldata(scanReference, flag string) string {
 	case flag == "verification":
 		url = BaseURL + scanReference + "/" + "data" + "/" + flag
 
-	//only the front images
+	//all the images info requery
+	case flag =="images":
+		url = BaseURL + scanReference + "/" + flag
+		//only the front images
 	case flag == "front":
 		url = BaseURL + scanReference + "/" + "images" + "/" + flag
 
@@ -97,9 +102,20 @@ func RetrievalServer()  {
 		}
 	})
 	r.GET("/retrieval", func(c *gin.Context) {
-			resp := Retrievaldata("948cc1c2-200e-42be-89c1-bf4113a083d1", "data")
-			fmt.Print(string(resp))
-			c.JSON(200, string(resp))
+		data := RetrievalfromJumio("948cc1c2-200e-42be-89c1-bf4113a083d1", "data")
+		dataBytes := []byte(data)
+		img := RetrievalfromJumio("948cc1c2-200e-42be-89c1-bf4113a083d1", "images")
+		imgBytes := []byte(img)
+
+		var m1, m2 map[string]interface{}
+
+		json.Unmarshal(dataBytes, &m1)
+		json.Unmarshal(imgBytes, &m2)
+
+		kycRes := mergemap.Merge(m1, m2)
+		kycBz, _ := json.Marshal(kycRes)
+
+		c.JSON(200, string(kycBz))
 	})
 	r.Run("192.168.1.23:8849")
 }
