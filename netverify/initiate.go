@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"net/http"
 	"time"
 )
@@ -167,6 +168,25 @@ func Initiate() {
 			c.JSON(404,"no such result")
 		}
 
+	})
+	r.Run("192.168.1.23:8848")
+}
+
+func InitiateMock() {
+	r := gin.Default()
+	r.POST("/initiate", func(c *gin.Context) {
+		const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+		b := make([]byte, 32)
+		for i := range b {
+			b[i] = letterBytes[rand.Int63() % int64(len(letterBytes))]
+		}
+		randstring := string(b)
+		timeStr:=time.Now().Format("2006-01-02T150405")
+		c.JSON(200, gin.H{
+			"timestamp": timeStr,
+			"transactionReference": randstring,
+			"redirectUrl": "www.abc.com",
+		})
 	})
 	r.Run("192.168.1.23:8848")
 }
