@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 )
 
 func RetrievalfromJumio(scanReference, flag string) string {
@@ -122,11 +123,19 @@ func RetrievalServer()  {
 }
 
 func RetrievalfromJumioMock() {
+	type JumioId struct {
+		ScanReference string  `uri:"scanReference" binding:"required"`
+	}
+	var jumioRef JumioId
 	r := gin.Default()
-	r.GET("/775c11b4-e9a7-4a23-bff8-b99cdef55e13/data", func(c *gin.Context) {
+	r.GET("/:scanReference/data", func(c *gin.Context) {
+		if err := c.ShouldBindUri(&jumioRef); err != nil {
+			c.JSON(400, gin.H{"msg": err})
+			return
+		}
 		data :=`{
-			"timestamp": "2019-03-27T04:17:30.795Z",
-			"scanReference": "775c11b4-e9a7-4a23-bff8-b99cdef55e13",
+			"timestamp": "2019-03-19T021726",
+			"scanReference": "oJnNPGsiuzytMOJPatwtPilfsfykSBGp",
 			"document": {
 				"type": "PASSPORT",
 				"dob": "1985-05-18",
@@ -157,38 +166,37 @@ func RetrievalfromJumioMock() {
 			}
 		}`
 		dataBytes := []byte(data)
-		//var datastruct Data
-		//json.Unmarshal(dataBytes,&datastruct)
-		c.Data(200,"application/json", dataBytes)
+		var datastruct Data
+		json.Unmarshal(dataBytes,&datastruct)
+		c.Data(200,"application/json",dataBytes)
 
 	})
-	r.GET("/775c11b4-e9a7-4a23-bff8-b99cdef55e13/images", func(c *gin.Context) {
+	r.GET("/:scanReference/images", func(c *gin.Context) {
+		if err := c.ShouldBindUri(&jumioRef); err != nil {
+			c.JSON(400, gin.H{"msg": err})
+			return
+		}
 		c.JSON(200, gin.H{
-			"timestamp": "2019-03-01T11:53:52.878Z",
+			"timestamp": time.Now().Format("2006-01-02T150405"),
 			"images": `[
 			{
 				"classifier": "back",
-				"href": "https://netverify.com/api/netverify/v2/scans/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/images/back"
+				"href": "http://aoe-qos.oss-cn-beijing.aliyuncs.com/test/1"
 			},
 			{
 				"classifier": "front",
-				"href": "https://netverify.com/api/netverify/v2/scans/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/images/front"
+				"href": "http://aoe-qos.oss-cn-beijing.aliyuncs.com/test/2"
 			},
 			{
 				"classifier": "face",
-				"href": "https://netverify.com/api/netverify/v2/scans/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/images/face"
+				"href": "http://aoe-qos.oss-cn-beijing.aliyuncs.com/test/2"
 			}
 		]`,
 			"livenessImages": `[
-			"https://netverify.com/api/netverify/v2/scans/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/images/liveness/7",
-			"https://netverify.com/api/netverify/v2/scans/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/images/liveness/5",
-			"https://netverify.com/api/netverify/v2/scans/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/images/liveness/6",
-			"https://netverify.com/api/netverify/v2/scans/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/images/liveness/3",
-			"https://netverify.com/api/netverify/v2/scans/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/images/liveness/4",
-			"https://netverify.com/api/netverify/v2/scans/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/images/liveness/1",
-			"https://netverify.com/api/netverify/v2/scans/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/images/liveness/2"
+			"http://aoe-qos.oss-cn-beijing.aliyuncs.com/test/1",
+			"http://aoe-qos.oss-cn-beijing.aliyuncs.com/test/2"
 		]`,
-			"scanReference": "775c11b4-e9a7-4a23-bff8-b99cdef55e13",
+			"scanReference": jumioRef.ScanReference,
 		})
 	})
 	r.Run("192.168.1.23:8849")

@@ -181,12 +181,20 @@ func InitiateMock() {
 			b[i] = letterBytes[rand.Int63() % int64(len(letterBytes))]
 		}
 		randstring := string(b)
-		timeStr:=time.Now().Format("2006-01-02T150405")
+		timeStr:= time.Now().Format("2006-01-02T150405")
 		c.JSON(200, gin.H{
 			"timestamp": timeStr,
 			"transactionReference": randstring,
 			"redirectUrl": "www.abc.com",
 		})
+		//time.Sleep(10 * time.Second)
+		//defer RetrievalInfo2Db(randstring)
+		//initiate a go routine to post info into DB
+		//go func() {
+			// simulate a long task with time.Sleep(). 5 minutes
+			//time.Sleep(10 * time.Second)
+			//RetrievalInfo2Db(randstring)
+		//}()
 	})
 	r.Run("192.168.1.23:8848")
 }

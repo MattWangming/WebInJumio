@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 )
 //data structure according to Jumio implemetation guide line, to be updated with normal Jumio license!
 type KycResultMerged struct {
@@ -124,8 +125,10 @@ type DataNew struct {
 
 
 //complete the flow with Retrieval-->Post2DB
-func RetrievalInfo2Db(scanReference string) {
+func RetrievalInfo2Db(c chan string) {
 	//retrieval info from Jumio server with the verification results
+	time.Sleep(300 * time.Second)
+	scanReference:= <- c
 	data := RetrievalfromJumio(scanReference, "data")
 	dataBytes := []byte(data)
 	var datastruct Data
@@ -151,8 +154,8 @@ func RetrievalInfo2Db(scanReference string) {
 	detail := string(kycBz)
 
 	//unmarshal into depth
-	docum := KycRes.Document
-	fmt.Println(docum)
+	//docum := KycRes.Document
+	//fmt.Println(docum)
 	//var Docres Doc
 	//json.Unmarshal(docum, &Docres)
 	expireTime := KycRes.Document.Expiry
@@ -168,7 +171,7 @@ func RetrievalInfo2Db(scanReference string) {
 		result = 0
 	}
 
-	fmt.Printf(detail,expireTime,jumioId,result)
+	//fmt.Printf(detail,expireTime,jumioId,result)
 
 	type formData struct {
 		Detail				string		`json:"detail"`
@@ -190,7 +193,7 @@ func RetrievalInfo2Db(scanReference string) {
 
 	payload, _ := json.Marshal(form)
 	body := bytes.NewBuffer(payload)
-	fmt.Println(string(payload))
+	//fmt.Println(string(payload))
 	req, _ := http.NewRequest("POST", url, body)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Add("Accept", "application/json")
