@@ -160,7 +160,7 @@ func RetrievalfromJumioMock() {
 				"identityVerification": {
 					"reason": "SELFIE_IS_SCREEN_PAPER_VIDEO",
 					"similarity": "NOT_POSSIBLE",
-					"validity": "false"
+					"validity": "true"
 				},
 				"mrzCheck": "OK"
 			}

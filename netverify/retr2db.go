@@ -127,13 +127,13 @@ type DataNew struct {
 //complete the flow with Retrieval-->Post2DB
 func RetrievalInfo2Db(c chan string) {
 	//retrieval info from Jumio server with the verification results
-	time.Sleep(300 * time.Second)
+	time.Sleep(10 * time.Second)
 	scanReference:= <- c
 	data := RetrievalfromJumio(scanReference, "data")
 	dataBytes := []byte(data)
 	var datastruct Data
 	json.Unmarshal(dataBytes,&datastruct)
-	fmt.Println(datastruct.Document)
+	//fmt.Println(datastruct.Document)
 
 	img := RetrievalfromJumio(scanReference, "images")
 	imgBytes := []byte(img)
@@ -193,7 +193,7 @@ func RetrievalInfo2Db(c chan string) {
 
 	payload, _ := json.Marshal(form)
 	body := bytes.NewBuffer(payload)
-	//fmt.Println(string(payload))
+	fmt.Println(string(payload))
 	req, _ := http.NewRequest("POST", url, body)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Add("Accept", "application/json")

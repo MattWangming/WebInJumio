@@ -3,6 +3,7 @@ package netverify
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"testing"
 )
 
@@ -50,4 +51,36 @@ func TestJumRes(t *testing.T)  {
 
 func TestCombine2(t *testing.T) {
 	Combine()
+}
+
+func TestJumIdrefa(t *testing.T) {
+	//const letterBytes = "775c11b4-e9a7-4a23-bff8-b99cdef55e13"
+	const le8 = "775c11b4"
+	const le4 = "e9a7"
+	const le12  = "b99cdef55e13"
+
+	b8 := make([]byte,8)
+	b4 := make([]byte,4)
+	b12 := make([]byte, 12)
+
+	for i := range b8 {
+		b8[i] = le8[rand.Intn(8) % int(len(le8))]
+	}
+
+	for i := range b4 {
+		b4[i] = le4[rand.Intn(4) % int(len(le4))]
+	}
+
+	for i := range b12 {
+		b12[i] = le12[rand.Intn(12) % int(len(le12))]
+	}
+
+	randstring := string(b8) + "-" + string(b4) + "-" + string(b4) + "-" + string(b4) + "-" + string(b12)
+
+	//b := make([]byte, 32)
+	//for i := range b {
+	//	b[i] = letterBytes[rand.Int31() % int32(len(letterBytes))]
+	//}
+	//randstring := string(b)
+	t.Log(randstring)
 }
