@@ -199,5 +199,5 @@ func RetrievalfromJumioMock() {
 			"scanReference": jumioRef.ScanReference,
 		})
 	})
-	r.Run("192.168.1.23:8849")
+	r.Run(":8849")
 }

@@ -20,5 +20,5 @@ func Combine() {
 		ch <- randstring
 		go RetrievalInfo2Db(ch)
 	})
-	r.Run("192.168.1.23:8848")
+	r.Run(":8848")
 }
