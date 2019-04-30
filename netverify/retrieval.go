@@ -177,7 +177,7 @@ func RetrievalfromJumioMock() {
 			return
 		}
 		c.JSON(200, gin.H{
-			"timestamp": time.Now().Format("2006-01-02T150405"),
+			"timestamp": time.Now().Format("2006-01-02 15:04:05"),
 			"images": `[
 			{
 				"classifier": "back",
