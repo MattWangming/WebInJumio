@@ -13,7 +13,7 @@ func Combine() {
 		c.JSON(200, gin.H{
 			"timestamp":            timeStr,
 			"transactionReference": randstring,
-			"redirectUrl":          "http://0.0.0.0:8850/up2",
+			"redirectUrl":          "https://www.qsto.network/jumio/up2",
 		})
 
 		ch := make(chan string, 1000)

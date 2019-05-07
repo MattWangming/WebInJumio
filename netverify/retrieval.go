@@ -13,7 +13,7 @@ import (
 
 func RetrievalfromJumio(scanReference, flag string) string {
 	//BaseURL := "https://netverify.com/api/netverify/v2/scans/"
-	BaseURL := "http://192.168.1.23:8849/"
+	BaseURL := "http://127.0.0.1:8849/"
 	//assemble the url with different router via different demands, e.g. data, transaction only, .etc
 	var url string
 
