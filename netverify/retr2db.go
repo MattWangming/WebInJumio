@@ -189,7 +189,7 @@ func RetrievalInfo2Db(c chan string) {
 		"123456",
 	}
 	//set the default callback url
-	url := "http://192.168.1.230:9090/kycApplies/callback"
+	url := "http://127.0.0.1:9090/kycApplies/callback"
 
 	payload, _ := json.Marshal(form)
 	body := bytes.NewBuffer(payload)
