@@ -195,7 +195,7 @@ func InitiateMock() {
 }
 
 func rdString() string {
-	const le8 = "775c11b4"
+	const le8 = "886c11b4"
 	const le4 = "e9a7"
 	const le12  = "b99cdef55e13"
 
