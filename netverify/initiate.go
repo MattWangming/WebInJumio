@@ -195,9 +195,9 @@ func InitiateMock() {
 }
 
 func rdString() string {
-	const le8 = "886c11b4"
-	const le4 = "e9a7"
-	const le12  = "b99cdef55e13"
+	const le8 = "886c11b5"
+	const le4 = "e9a8"
+	const le12  = "b99cdef55e14"
 
 	b8 := make([]byte,8)
 	b4 := make([]byte,4)
