@@ -4,88 +4,90 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/mergemap"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/mergemap"
 )
+
 //data structure according to Jumio implemetation guide line, to be updated with normal Jumio license!
 type KycResultMerged struct {
-	Timestamp			string		`json:"timestamp"`
-	ScanReference		string		`json:"scanReference"`
-	Document			Doc			`json:"document"`
-	Transaction			Tx			`json:"transaction"`
-	Verification		Veri      	`json:"verification"`
-	Images				Imgs		`json:"images"`
-	LivenessImages		[]string	`json:"livenessImages"`
+	Timestamp      string   `json:"timestamp"`
+	ScanReference  string   `json:"scanReference"`
+	Document       Doc      `json:"document"`
+	Transaction    Tx       `json:"transaction"`
+	Verification   Veri     `json:"verification"`
+	Images         Imgs     `json:"images"`
+	LivenessImages []string `json:"livenessImages"`
 }
 
 type Data struct {
-	Timestamp			string		`json:"timestamp"`
-	ScanReference		string		`json:"scanReference"`
-	Document			Doc			`json:"document"`
-	Transaction			Tx			`json:"transaction"`
-	Verification		Veri      	`json:"verification"`
+	Timestamp     string `json:"timestamp"`
+	ScanReference string `json:"scanReference"`
+	Document      Doc    `json:"document"`
+	Transaction   Tx     `json:"transaction"`
+	Verification  Veri   `json:"verification"`
 }
 
 type Imgages struct {
-	Timestamp			string		`json:"timestamp"`
-	ScanReference		string		`json:"scanReference"`
-	Images				Imgs		`json:"images"`
-	LivenessImages		[]string	`json:"livenessImages"`
+	Timestamp      string   `json:"timestamp"`
+	ScanReference  string   `json:"scanReference"`
+	Images         Imgs     `json:"images"`
+	LivenessImages []string `json:"livenessImages"`
 }
 
 type Doc struct {
-	Type			string			`json:"type"`
-	Dob				string			`json:"dob"`
-	Expiry			string			`json:"expiry"`
-	FirstName		string			`json:"firstName"`
-	IssuingCountry  string			`json:"issuingCountry"`
-	IssuingDate		string			`json:"issuingDate,omitempty"`
-	LastName		string			`json:"lastName"`
-	Number			string			`json:"number"`
-	PersonalNumber  string			`json:"personalNumber"`
-	Status			string			`json:"status"`
+	Type           string `json:"type"`
+	Dob            string `json:"dob"`
+	Expiry         string `json:"expiry"`
+	FirstName      string `json:"firstName"`
+	IssuingCountry string `json:"issuingCountry"`
+	IssuingDate    string `json:"issuingDate,omitempty"`
+	LastName       string `json:"lastName"`
+	Number         string `json:"number"`
+	PersonalNumber string `json:"personalNumber"`
+	Status         string `json:"status"`
 }
 
 type Tx struct {
-	ClientIp						string			`json:"clientIp"`
-	CustomerId						string			`json:"customerId"`
-	Date							string			`json:"date"`
-	MerchantReportingCriteria		string			`json:"merchantReportingCriteria"`
-	MerchantScanReference			string			`json:"merchantScanReference"`
-	Source							string			`json:"source"`
-	Status							string			`json:"status"`
+	ClientIp                  string `json:"clientIp"`
+	CustomerId                string `json:"customerId"`
+	Date                      string `json:"date"`
+	MerchantReportingCriteria string `json:"merchantReportingCriteria"`
+	MerchantScanReference     string `json:"merchantScanReference"`
+	Source                    string `json:"source"`
+	Status                    string `json:"status"`
 }
 
 type Veri struct {
-	IdentityVerification			IdentityVeri		`json:"identityVerification"`
-	MrzCheck						string				`json:"mrzCheck"`
-	RejectReason					RejectR				`json:"rejectReason,omitempty"`
+	IdentityVerification IdentityVeri `json:"identityVerification"`
+	MrzCheck             string       `json:"mrzCheck"`
+	RejectReason         RejectR      `json:"rejectReason,omitempty"`
 }
 
 type IdentityVeri struct {
-	Reason						string				`json:"reason"`
-	Similarity					string				`json:"similarity"`
-	Validity					string				`json:"validity"`
-	HandwrittenNoteMatches		string				`json:"handwrittenNoteMatches,omitempty"`
+	Reason                 string `json:"reason"`
+	Similarity             string `json:"similarity"`
+	Validity               string `json:"validity"`
+	HandwrittenNoteMatches string `json:"handwrittenNoteMatches,omitempty"`
 }
 
 type RejectR struct {
-	RejectReasonCode     		string			`json:"rejectReasonCode,omitempty"`
-	RejectReasonDescription		string			`json:"rejectReasonDescription,omitempty"`
-	RejectReasonDetails       	RejectD			`json:"rejectReasonDetails,omitempty"`
+	RejectReasonCode        string  `json:"rejectReasonCode,omitempty"`
+	RejectReasonDescription string  `json:"rejectReasonDescription,omitempty"`
+	RejectReasonDetails     RejectD `json:"rejectReasonDetails,omitempty"`
 }
 
 type RejectD struct {
-	DetailsCode			string			`json:"detailsCode,omitempty"`
-	DetailsDescription  string			`json:"detailsDescription,omitempty"`
+	DetailsCode        string `json:"detailsCode,omitempty"`
+	DetailsDescription string `json:"detailsDescription,omitempty"`
 }
 
 type img struct {
-	Classifier			string		`json:"classifier"`
-	Href				string		`json:"href"`
+	Classifier string `json:"classifier"`
+	Href       string `json:"href"`
 }
 
 type Imgs []img
@@ -123,16 +125,15 @@ type DataNew struct {
 	} `json:"verification"`
 }
 
-
 //complete the flow with Retrieval-->Post2DB
 func RetrievalInfo2Db(c chan string) {
 	//retrieval info from Jumio server with the verification results
 	time.Sleep(10 * time.Second)
-	scanReference:= <- c
+	scanReference := <-c
 	data := RetrievalfromJumio(scanReference, "data")
 	dataBytes := []byte(data)
 	var datastruct Data
-	json.Unmarshal(dataBytes,&datastruct)
+	json.Unmarshal(dataBytes, &datastruct)
 	//fmt.Println(datastruct.Document)
 
 	img := RetrievalfromJumio(scanReference, "images")
@@ -148,7 +149,7 @@ func RetrievalInfo2Db(c chan string) {
 	kycBz, _ := json.Marshal(kycMerg)
 	//fmt.Println(string(kycBz))
 	var KycRes KycResultMerged
-	json.Unmarshal(kycBz,&KycRes)
+	json.Unmarshal(kycBz, &KycRes)
 	jumioId := KycRes.ScanReference
 	//info need to push/post to database
 	detail := string(kycBz)
@@ -174,11 +175,11 @@ func RetrievalInfo2Db(c chan string) {
 	//fmt.Printf(detail,expireTime,jumioId,result)
 
 	type formData struct {
-		Detail				string		`json:"detail"`
-		ExpireTime			string		`json:"expireTime"`
-		JumioId				string		`json:"jumioId"`
-		Result				int32		`json:"result"`
-		Cipher				string		`json:"cipher"`
+		Detail     string `json:"detail"`
+		ExpireTime string `json:"expireTime"`
+		JumioId    string `json:"jumioId"`
+		Result     int32  `json:"result"`
+		Cipher     string `json:"cipher"`
 	}
 
 	form := formData{
