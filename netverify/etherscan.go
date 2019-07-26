@@ -50,7 +50,7 @@ func Ercscantxlist() {
 }
 
 //Ethscan
-func Ethscan(addr, page, offset string) string {
+func Ethscan(addr, page, offset string) []byte {
 	baseurl := "https://api.etherscan.io/api?module=account&action=txlist"
 	ad := addr
 	pa := page
@@ -69,12 +69,12 @@ func Ethscan(addr, page, offset string) string {
 		log.Fatal(err)
 	}
 
-	return string(respBody)
+	return respBody
 
 }
 
 //Ercscan
-func Ercscan(contract, addr, page, offset string) string {
+func Ercscan(contract, addr, page, offset string) []byte {
 	baseurl := "https://api.etherscan.io/api?module=account&action=tokentx"
 	ca := contract
 	ad := addr
@@ -94,6 +94,6 @@ func Ercscan(contract, addr, page, offset string) string {
 		log.Fatal(err)
 	}
 
-	return string(respBody)
+	return respBody
 
 }
