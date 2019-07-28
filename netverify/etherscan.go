@@ -24,11 +24,19 @@ type Ercinput struct {
 //Etherscantxlist
 func Etherscantxlist() {
 	r := gin.Default()
-	r.GET("/txlist", func(c *gin.Context) {
+	r.GET("/ethtxlist", func(c *gin.Context) {
 		var ethinput Ethinput
 		if c.ShouldBind(&ethinput) == nil {
 			resp := Ethscan(ethinput.Addr, ethinput.Page, ethinput.Offset)
-			c.JSON(200, resp)
+			c.String(200, resp)
+		}
+
+	})
+	r.GET("/tokentxlist", func(c *gin.Context) {
+		var ercinput Ercinput
+		if c.ShouldBind(&ercinput) == nil {
+			resp := Ercscan(ercinput.Contract, ercinput.Addr, ercinput.Page, ercinput.Offset)
+			c.String(200, resp)
 		}
 
 	})
@@ -50,7 +58,7 @@ func Ercscantxlist() {
 }
 
 //Ethscan
-func Ethscan(addr, page, offset string) []byte {
+func Ethscan(addr, page, offset string) string {
 	baseurl := "https://api.etherscan.io/api?module=account&action=txlist"
 	ad := addr
 	pa := page
@@ -69,12 +77,12 @@ func Ethscan(addr, page, offset string) []byte {
 		log.Fatal(err)
 	}
 
-	return respBody
+	return string(respBody)
 
 }
 
 //Ercscan
-func Ercscan(contract, addr, page, offset string) []byte {
+func Ercscan(contract, addr, page, offset string) string {
 	baseurl := "https://api.etherscan.io/api?module=account&action=tokentx"
 	ca := contract
 	ad := addr
@@ -94,6 +102,6 @@ func Ercscan(contract, addr, page, offset string) []byte {
 		log.Fatal(err)
 	}
 
-	return respBody
+	return string(respBody)
 
 }
