@@ -64,7 +64,7 @@ func Ethscan(addr, page, offset string) string {
 	pa := page
 	os := offset
 
-	url := baseurl + "&address=" + ad + "&startblock=0&endblock=99999999" + "&page=" + pa + "&offset=" + os + "&sort=asc&apikey=YourApiKeyToken"
+	url := baseurl + "&address=" + ad + "&startblock=0&endblock=99999999" + "&page=" + pa + "&offset=" + os + "&sort=desc&apikey=YourApiKeyToken"
 	// req, _ := http.NewRequest("GET", url)
 	resp, err := http.Get(url)
 	if err != nil {
@@ -89,7 +89,7 @@ func Ercscan(contract, addr, page, offset string) string {
 	pa := page
 	os := offset
 
-	url := baseurl + "&contractaddress=" + ca + "&address=" + ad + "&page=" + pa + "&offset=" + os + "&sort=asc&apikey=YourApiKeyToken"
+	url := baseurl + "&contractaddress=" + ca + "&address=" + ad + "&page=" + pa + "&offset=" + os + "&sort=desc&apikey=YourApiKeyToken"
 	// req, _ := http.NewRequest("GET", url)
 	resp, err := http.Get(url)
 	if err != nil {
