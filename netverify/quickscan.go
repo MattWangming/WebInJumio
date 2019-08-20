@@ -26,7 +26,7 @@ func Quickscan() {
 					"decimal":"^[0-18]\&$",
 					"value":"^[1-9]\d*\.\d*|0\.\d*[1-9]\d*|0$"
 				}
-			}
+			},
 			"2" : {
 				"EthAddress": "^0x[0-9a-fA-F]{40}$",
 				"CosmosAddress": "^cosmos1[0-9a-z]{38}$",
