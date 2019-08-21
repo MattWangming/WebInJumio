@@ -14,10 +14,10 @@ func Quickscan() {
 						"comment":"This is for normal ethereum template checking"
 					},			
 					{
-						"address":"^ethereum:0x[0-9a-fA-F]{40}\b",
-						"contractAddress":"\bcontractAddress=0x[0-9a-fA-F]{40}\b",
-						"decimal":"\bdecimal=[0-9]+(.[0-9]+)?\b",
-						"value":"\bvalue=[0-9]+(.[0-9]+)?$",	
+						"address":"^ethereum:0x[0-9a-fA-F]{40}",
+						"contractAddress":"contractAddress=0x[0-9a-fA-F]{40}",
+						"decimal":"decimal=[0-9]+(.[0-9]+)?",
+						"value":"value=[0-9]+(.[0-9]+)?$",	
 						"comment":"This is for imToken ethereum template checking"	
 					}
 				]`
@@ -31,10 +31,10 @@ func Quickscan() {
 						"comment":"This is for normal cosmos networks template checking"
 					},
 					{	
-						"address":"^cosmos:cosmos1[0-9a-z]{38}\b",
-						"contractAddress":"\bcontractAddress=uatom\b",
-						"decimal":"\bdecimal=[0-9]+(.[0-9]+)?\b",
-						"value":"\bvalue=[0-9]+(.[0-9]+)?$",
+						"address":"^cosmos:cosmos1[0-9a-z]{38}",
+						"contractAddress":"contractAddress=uatom",
+						"decimal":"decimal=[0-9]+(.[0-9]+)?",
+						"value":"value=[0-9]+(.[0-9]+)?$",
 						"comment":"This is for imtoken cosmos networks template checking"
 					}
 				]`
