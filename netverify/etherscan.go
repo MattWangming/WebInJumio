@@ -21,6 +21,10 @@ type Ercinput struct {
 	Offset   string `form:"offset"`
 }
 
+type Erctoken struct {
+	Token string `form:"token"`
+}
+
 //Etherscantxlist
 func Etherscantxlist() {
 	r := gin.Default()
@@ -40,10 +44,12 @@ func Etherscantxlist() {
 		}
 
 	})
-	r.GET("/erctoken:token", func(c *gin.Context) {
-		token := c.Param("token")
-		resp := Ercsearch(token)
-		c.String(200, resp)
+	r.GET("/erctoken", func(c *gin.Context) {
+		var erctoken Erctoken
+		if c.ShouldBind(&erctoken) == nil {
+			resp := Ercsearch(erctoken.Token)
+			c.String(200, resp)
+		}
 	})
 	r.Run(":8848")
 }
