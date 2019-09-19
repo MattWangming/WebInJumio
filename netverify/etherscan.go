@@ -40,6 +40,11 @@ func Etherscantxlist() {
 		}
 
 	})
+	r.GET("/erctoken:token", func(c *gin.Context) {
+		token := c.Param("token")
+		resp := Ercsearch(token)
+		c.String(200, resp)
+	})
 	r.Run(":8848")
 }
 
@@ -91,6 +96,25 @@ func Ercscan(contract, addr, page, offset string) string {
 
 	url := baseurl + "&contractaddress=" + ca + "&address=" + ad + "&page=" + pa + "&offset=" + os + "&sort=desc&apikey=YourApiKeyToken"
 	// req, _ := http.NewRequest("GET", url)
+	resp, err := http.Get(url)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer resp.Body.Close()
+
+	respBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return string(respBody)
+
+}
+
+//Ercsearch
+func Ercsearch(token string) string {
+	baseurl := "https://etherscan.io/searchHandler"
+	url := baseurl + "?term=" + token + "&filterby=0"
 	resp, err := http.Get(url)
 	if err != nil {
 		log.Fatal(err)
